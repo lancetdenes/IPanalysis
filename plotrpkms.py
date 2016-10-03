@@ -8,7 +8,7 @@ def IP_rpkms_to_logplots(IP_file, input_file):
     input_num = input_file[0]
     IP_dict = {}
     input_dict = {}
-    
+#parses IP and input rpkm table files into dictionaries      
     for line in open(IP_file):
         vals = line.strip().split('\t')
         genename = vals[0]
@@ -35,6 +35,7 @@ def IP_rpkms_to_logplots(IP_file, input_file):
     toplist = []
     bottomlist = []
     
+#writes file with rpkm values, logged rpkm values, relevant ratios, and whether or not they are enriched between IP and input
     file = open('datafile_%s_%s.txt' % (IP_num, input_num), 'w')
     file.write('gene\trpkm_input\trpkm_IP\tin_log\tIP_log\tIPtoin\tIPtoinlog\tside\n')
     for key in input_dict:
@@ -50,7 +51,7 @@ def IP_rpkms_to_logplots(IP_file, input_file):
         IP_log_list.append(IP_log)
         IPtoin = (rpkm_IP/rpkm_input)
         IPtoinlog = (IP_log/in_log)
-        
+        #calculate if in top (enriched in IP) or bottom (enriched in input)
         if IP_log > ((0.8*in_log)-0.5):
             toplist_IP.append(IP_log)
             toplist_in.append(in_log)
@@ -63,6 +64,8 @@ def IP_rpkms_to_logplots(IP_file, input_file):
             toporbottom = 'bottom'
         file.write('%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n' % (key, rpkm_input, rpkm_IP, in_log, IP_log, IPtoin, IPtoinlog, toporbottom))
     file.close()
+    
+#makes plot with top and bottom separated
     plt.figure(1)
     plt.subplot(212)
     plt.plot(bottomlist_in, bottomlist_IP, 'bo')
@@ -70,7 +73,7 @@ def IP_rpkms_to_logplots(IP_file, input_file):
     plt.plot(toplist_in, toplist_IP, 'bo')
     plt.savefig('low_vs_high_%svs%s.jpg' %(IP_num, input_num))
     plt.close()
-    
+#writes a file with a list of all genes in the top and all genes in the bottom    
     with open('topgenes_%s_%s.txt' %(IP_num, input_num), 'w') as topgenes:
         for gene in toplist:
             topgenes.write('%s\n' % gene)
@@ -82,10 +85,10 @@ def IP_rpkms_to_logplots(IP_file, input_file):
    
 
 
-
-
+# run on each pair of samples 
+'''
 IP_rpkms_to_logplots('2.bam.rpkm', '1.bam.rpkm')
 IP_rpkms_to_logplots('4.bam.rpkm', '3.bam.rpkm')
 IP_rpkms_to_logplots('6.bam.rpkm', '5.bam.rpkm')
 IP_rpkms_to_logplots('8.bam.rpkm', '7.bam.rpkm')
-
+'''
